@@ -7,7 +7,7 @@ export function WalletChecker() {
   const [account, setAccount] = useState<string | null>(null)
   const [network, setNetwork] = useState<string | null>(null)
 
-  // 🔴 TRON
+  // 🔴 TRON DETECTION
   const connectTron = async () => {
     const tronWeb = (window as any).tronWeb
 
@@ -18,66 +18,78 @@ export function WalletChecker() {
     return null
   }
 
-  // 🔥 CONNECT
+  // 🔵 ETH / BNB
+  const connectEVM = async () => {
+    if ((window as any).ethereum) {
+      const accounts = await (window as any).ethereum.request({
+        method: "eth_requestAccounts",
+      })
+      return accounts[0]
+    }
+    return null
+  }
+
+  // 🟣 WalletConnect
+  const connectWC = async () => {
+    const provider = await EthereumProvider.init({
+      projectId: "4031374b764bd6a586794c70e24198fb",
+      chains: [1],
+      showQrModal: true,
+    })
+
+    await provider.connect()
+    return provider.accounts[0]
+  }
+
+  // 🔥 MAIN CONNECT
   const connectWallet = async () => {
     try {
-      // TRON
       if (network === "TRON") {
-        const tronAddress = await connectTron()
+        const acc = await connectTron()
 
-        if (tronAddress) {
-          setAccount(tronAddress)
-          return
+        if (acc) {
+          setAccount(acc)
         } else {
           alert("Abre esto dentro de Trust Wallet o TronLink")
-          return
         }
-      }
-
-      // ETH / BNB
-      if ((window as any).ethereum) {
-        const accounts = await (window as any).ethereum.request({
-          method: "eth_requestAccounts",
-        })
-
-        setAccount(accounts[0])
         return
       }
 
-      // WalletConnect
-      const provider = await EthereumProvider.init({
-        projectId: "4031374b764bd6a586794c70e24198fb",
-        chains: [1],
-        showQrModal: true,
-      })
+      // ETH / BNB
+      const evm = await connectEVM()
+      if (evm) {
+        setAccount(evm)
+        return
+      }
 
-      await provider.connect()
-      setAccount(provider.accounts[0])
-    } catch (err) {
-      console.error(err)
-      alert("Error conectando wallet")
+      // fallback QR
+      const wc = await connectWC()
+      setAccount(wc)
+    } catch (e) {
+      console.error(e)
+      alert("Error conectando")
     }
   }
 
   return (
     <section className="py-20 text-center">
       <h2 className="text-2xl font-bold mb-6">
-        TEST PRUEBA VISIBLE ULTRA
+        Connect Wallet
       </h2>
 
       {!network && (
         <div className="space-y-3">
           <p>Select Network</p>
 
-          <button onClick={() => setNetwork("ETH")} className="block w-full border p-3 rounded">
+          <button onClick={() => setNetwork("ETH")} className="border p-3 w-full">
             Ethereum
           </button>
 
-          <button onClick={() => setNetwork("BNB")} className="block w-full border p-3 rounded">
+          <button onClick={() => setNetwork("BNB")} className="border p-3 w-full">
             BNB Chain
           </button>
 
-          <button onClick={() => setNetwork("TRON")} className="block w-full border p-3 rounded">
+          <button onClick={() => setNetwork("TRON")} className="border p-3 w-full">
             TRON
           </button>
         </div>
@@ -89,9 +101,9 @@ export function WalletChecker() {
 
           <button
             onClick={connectWallet}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg"
+            className="px-6 py-3 bg-blue-600 text-white rounded"
           >
-            Conectar Wallet
+            Conectar
           </button>
         </div>
       )}
