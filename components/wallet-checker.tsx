@@ -62,7 +62,7 @@ export function WalletChecker() {
   return (
     <section className="py-20 text-center">
       <h2 className="text-2xl font-bold mb-6">
-        TEST NUEVO WALLET
+        TEST PRUEBA VISIBLE ULTRA
       </h2>
 
       {!network && (
