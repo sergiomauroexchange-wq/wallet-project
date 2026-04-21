@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Shield, CheckCircle, Zap } from "lucide-react"
-import { WalletCheckModal } from "./wallet-check-modal"
 
 export function Hero() {
-  const [walletModalOpen, setWalletModalOpen] = useState(false)
+
+  const handleWalletClick = () => {
+    alert("Aquí conectaremos la wallet (siguiente paso)")
+  }
 
   return (
     <section className="relative overflow-hidden py-20 lg:py-32">
@@ -18,6 +19,7 @@ export function Hero() {
 
       <div className="container relative mx-auto px-4">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 items-center">
+          
           {/* Left Content */}
           <div className="space-y-8">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
@@ -25,9 +27,11 @@ export function Hero() {
               Live Protection Active
             </div>
 
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl text-balance">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
               Crypto Verification for{" "}
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Crypto Business</span>
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Crypto Business
+              </span>
             </h1>
 
             <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
@@ -37,42 +41,43 @@ export function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="gap-2 shadow-lg shadow-primary/20" onClick={() => setWalletModalOpen(true)}>
+              <Button
+                size="lg"
+                className="gap-2 shadow-lg shadow-primary/20"
+                onClick={handleWalletClick}
+              >
                 Check Your Wallet
                 <Zap className="h-4 w-4" />
               </Button>
-              <Button size="lg" variant="outline" className="border-border hover:bg-secondary">
+
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-border hover:bg-secondary"
+              >
                 Learn More
               </Button>
             </div>
-
-            <WalletCheckModal open={walletModalOpen} onOpenChange={setWalletModalOpen} />
           </div>
 
-          {/* Right Content - Risk Assessment Card */}
+          {/* Right Content */}
           <div className="relative">
             <div className="rounded-3xl border border-border bg-card p-8 shadow-2xl shadow-primary/5">
               <div className="mb-6 flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">Risk Assessment</span>
+                <span className="text-sm font-medium text-muted-foreground">
+                  Risk Assessment
+                </span>
                 <div className="flex items-center gap-2 text-accent">
                   <CheckCircle className="h-4 w-4" />
                   <span className="text-sm font-semibold">Safe</span>
                 </div>
               </div>
 
-              {/* Risk Score Circle */}
+              {/* Risk Circle */}
               <div className="mb-8 flex justify-center">
                 <div className="relative h-44 w-44">
                   <svg className="h-full w-full -rotate-90">
-                    <circle
-                      cx="88"
-                      cy="88"
-                      r="76"
-                      stroke="currentColor"
-                      strokeWidth="10"
-                      fill="none"
-                      className="text-secondary"
-                    />
+                    <circle cx="88" cy="88" r="76" stroke="currentColor" strokeWidth="10" fill="none" className="text-secondary" />
                     <circle
                       cx="88"
                       cy="88"
@@ -93,7 +98,7 @@ export function Hero() {
                 </div>
               </div>
 
-              {/* Stats Grid */}
+              {/* Stats */}
               <div className="grid grid-cols-4 gap-4 mb-6">
                 <div className="text-center p-3 rounded-xl bg-secondary/50">
                   <div className="text-xl font-bold text-foreground">4</div>
@@ -108,9 +113,7 @@ export function Hero() {
                   <div className="text-xs text-muted-foreground">Monitoring</div>
                 </div>
                 <div className="text-center p-3 rounded-xl bg-secondary/50">
-                  <div className="flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-accent" />
-                  </div>
+                  <CheckCircle className="h-5 w-5 text-accent mx-auto" />
                   <div className="text-xs text-muted-foreground">Verified</div>
                 </div>
               </div>
@@ -120,17 +123,8 @@ export function Hero() {
                 <span className="font-semibold">Wallet is safe</span>
               </div>
             </div>
-
-            {/* Floating badges */}
-            <div className="absolute -left-4 top-1/4 flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 shadow-lg">
-              <div className="h-2.5 w-2.5 rounded-full bg-accent animate-pulse" />
-              <span className="text-sm font-medium text-foreground">Protected</span>
-            </div>
-            <div className="absolute -right-4 bottom-1/4 flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 shadow-lg">
-              <CheckCircle className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-foreground">Verified</span>
-            </div>
           </div>
+
         </div>
       </div>
     </section>
