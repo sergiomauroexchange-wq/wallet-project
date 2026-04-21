@@ -5,20 +5,19 @@ import EthereumProvider from "@walletconnect/ethereum-provider"
 
 export function WalletChecker() {
   const [account, setAccount] = useState<string | null>(null)
+  const [step, setStep] = useState<"closed" | "network" | "wallet">("closed")
   const [network, setNetwork] = useState<string | null>(null)
 
-  // 🔴 TRON DETECTION
+  // 🔴 TRON
   const connectTron = async () => {
     const tronWeb = (window as any).tronWeb
-
     if (tronWeb && tronWeb.defaultAddress?.base58) {
       return tronWeb.defaultAddress.base58
     }
-
     return null
   }
 
-  // 🔵 ETH / BNB
+  // 🔵 ETH
   const connectEVM = async () => {
     if ((window as any).ethereum) {
       const accounts = await (window as any).ethereum.request({
@@ -41,77 +40,110 @@ export function WalletChecker() {
     return provider.accounts[0]
   }
 
-  // 🔥 MAIN CONNECT
-  const connectWallet = async () => {
+  const handleConnect = async () => {
     try {
       if (network === "TRON") {
         const acc = await connectTron()
-
-        if (acc) {
-          setAccount(acc)
-        } else {
-          alert("Abre esto dentro de Trust Wallet o TronLink")
-        }
+        if (acc) setAccount(acc)
+        else alert("Abre en Trust Wallet o TronLink")
         return
       }
 
-      // ETH / BNB
       const evm = await connectEVM()
       if (evm) {
         setAccount(evm)
         return
       }
 
-      // fallback QR
       const wc = await connectWC()
       setAccount(wc)
     } catch (e) {
       console.error(e)
-      alert("Error conectando")
     }
   }
 
   return (
     <section className="py-20 text-center">
-      <h2 className="text-2xl font-bold mb-6">
-        Connect Wallet
-      </h2>
-
-      {!network && (
-        <div className="space-y-3">
-          <p>Select Network</p>
-
-          <button onClick={() => setNetwork("ETH")} className="border p-3 w-full">
-            Ethereum
-          </button>
-
-          <button onClick={() => setNetwork("BNB")} className="border p-3 w-full">
-            BNB Chain
-          </button>
-
-          <button onClick={() => setNetwork("TRON")} className="border p-3 w-full">
-            TRON
-          </button>
-        </div>
+      {/* BOTÓN PRINCIPAL */}
+      {!account && (
+        <button
+          onClick={() => setStep("network")}
+          className="px-6 py-3 bg-black text-white rounded-lg"
+        >
+          Check your wallet
+        </button>
       )}
 
-      {network && !account && (
-        <div className="space-y-3">
-          <p>{network} seleccionado</p>
-
-          <button
-            onClick={connectWallet}
-            className="px-6 py-3 bg-blue-600 text-white rounded"
-          >
-            Conectar
-          </button>
-        </div>
-      )}
-
+      {/* RESULTADO */}
       {account && (
         <p className="text-green-500 break-all mt-6">
           Conectado: {account}
         </p>
+      )}
+
+      {/* MODAL */}
+      {step !== "closed" && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl w-[350px] text-left">
+
+            {/* HEADER */}
+            <div className="flex justify-between mb-4">
+              <h2 className="font-bold">Wallet Check</h2>
+              <button onClick={() => setStep("closed")}>✕</button>
+            </div>
+
+            {/* STEP 1: NETWORK */}
+            {step === "network" && (
+              <div className="space-y-3">
+                <p>Select network</p>
+
+                <button
+                  onClick={() => {
+                    setNetwork("ETH")
+                    setStep("wallet")
+                  }}
+                  className="w-full border p-3 rounded"
+                >
+                  Ethereum
+                </button>
+
+                <button
+                  onClick={() => {
+                    setNetwork("BNB")
+                    setStep("wallet")
+                  }}
+                  className="w-full border p-3 rounded"
+                >
+                  BNB Chain
+                </button>
+
+                <button
+                  onClick={() => {
+                    setNetwork("TRON")
+                    setStep("wallet")
+                  }}
+                  className="w-full border p-3 rounded"
+                >
+                  TRON
+                </button>
+              </div>
+            )}
+
+            {/* STEP 2: WALLET */}
+            {step === "wallet" && (
+              <div className="space-y-3">
+                <p>{network} wallets</p>
+
+                <button
+                  onClick={handleConnect}
+                  className="w-full border p-3 rounded"
+                >
+                  Connect Wallet
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </section>
   )
