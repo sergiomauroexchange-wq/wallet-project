@@ -8,7 +8,6 @@ import { Pricing } from "@/components/pricing"
 import { HowItWorks } from "@/components/how-it-works"
 import { FAQ } from "@/components/faq"
 import { About } from "@/components/about"
-import { WalletChecker } from "@/components/wallet-checker"
 import { Footer } from "@/components/footer"
 
 export default function Home() {
@@ -22,7 +21,6 @@ export default function Home() {
       <HowItWorks />
       <FAQ />
       <About />
-      <WalletChecker />
       <Footer />
     </main>
   )
