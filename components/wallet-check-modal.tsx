@@ -14,7 +14,7 @@ export function WalletCheckModal({ open, onClose }: Props) {
 
   if (!open) return null
 
-  const networks = [
+const networks = [
   {
     name: "Ethereum",
     logo: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
@@ -26,6 +26,10 @@ export function WalletCheckModal({ open, onClose }: Props) {
   {
     name: "TRON",
     logo: "https://assets.coingecko.com/coins/images/1094/small/tron-logo.png",
+  },
+  {
+    name: "Solana",
+    logo: "https://assets.coingecko.com/coins/images/4128/small/solana.png",
   },
 ]
 
@@ -43,8 +47,12 @@ const wallets = [
     logo: "https://trustwallet.com/assets/images/media/assets/TWT.png",
   },
   {
+    name: "Phantom", // 👈 para Solana
+    logo: "https://avatars.githubusercontent.com/u/78782331",
+  },
+  {
     name: "TronLink",
-    logo: "https://seeklogo.com/images/T/tronlink-logo-4E6C60E3F6-seeklogo.com.png",
+    logo: "https://avatars.githubusercontent.com/u/37784886?s=200&v=4", // fallback estable
   },
   {
     name: "SafePal",
