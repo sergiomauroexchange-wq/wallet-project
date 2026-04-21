@@ -15,6 +15,10 @@ const navLinks = [
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  const handleWalletClick = () => {
+    alert("Aquí conectaremos la wallet (siguiente paso)")
+  }
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -24,7 +28,9 @@ export function Header() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <Shield className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-bold text-foreground">Crypto Check</span>
+          <span className="text-lg font-bold text-foreground">
+            Crypto Check
+          </span>
         </a>
 
         {/* Desktop Nav */}
@@ -33,7 +39,7 @@ export function Header() {
             <a
               key={link.label}
               href={link.href}
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {link.label}
             </a>
@@ -42,7 +48,7 @@ export function Header() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Button size="sm">
+          <Button size="sm" onClick={handleWalletClick}>
             Check Your Wallet
           </Button>
         </div>
@@ -74,7 +80,14 @@ export function Header() {
                 {link.label}
               </a>
             ))}
-            <Button className="w-full">
+
+            <Button
+              className="w-full"
+              onClick={() => {
+                handleWalletClick()
+                setMobileMenuOpen(false)
+              }}
+            >
               Check Your Wallet
             </Button>
           </nav>
