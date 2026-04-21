@@ -15,42 +15,42 @@ export function WalletCheckModal({ open, onClose }: Props) {
   if (!open) return null
 
   const networks = [
-    {
-      name: "Ethereum",
-      logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
-    },
-    {
-      name: "BNB Chain",
-      logo: "https://cryptologos.cc/logos/bnb-bnb-logo.png",
-    },
-    {
-      name: "TRON",
-      logo: "https://cryptologos.cc/logos/tron-trx-logo.png",
-    },
-  ]
+  {
+    name: "Ethereum",
+    logo: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
+  },
+  {
+    name: "BNB Chain",
+    logo: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png",
+  },
+  {
+    name: "TRON",
+    logo: "https://assets.coingecko.com/coins/images/1094/small/tron-logo.png",
+  },
+]
 
-  const wallets = [
-    {
-      name: "MetaMask",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
-    },
-    {
-      name: "WalletConnect",
-      logo: "https://avatars.githubusercontent.com/u/37784886",
-    },
-    {
-      name: "Trust Wallet",
-      logo: "https://trustwallet.com/assets/images/media/assets/TWT.png",
-    },
-    {
-      name: "TronLink",
-      logo: "https://seeklogo.com/images/T/tronlink-logo-4E6C60E3F6-seeklogo.com.png",
-    },
-    {
-      name: "SafePal",
-      logo: "https://seeklogo.com/images/S/safepal-logo-3A7D8D3A44-seeklogo.com.png",
-    },
-  ]
+const wallets = [
+  {
+    name: "MetaMask",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
+  },
+  {
+    name: "WalletConnect",
+    logo: "https://avatars.githubusercontent.com/u/37784886",
+  },
+  {
+    name: "Trust Wallet",
+    logo: "https://trustwallet.com/assets/images/media/assets/TWT.png",
+  },
+  {
+    name: "TronLink",
+    logo: "https://seeklogo.com/images/T/tronlink-logo-4E6C60E3F6-seeklogo.com.png",
+  },
+  {
+    name: "SafePal",
+    logo: "https://seeklogo.com/images/S/safepal-logo-3A7D8D3A44-seeklogo.com.png",
+  },
+]
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
