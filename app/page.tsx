@@ -25,5 +25,6 @@ export default function Home() {
       <WalletChecker />
       <Footer />
     </main>
+    <h1>TEST CAMBIO</h1>
   )
 }
