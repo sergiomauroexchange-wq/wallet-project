@@ -14,10 +14,6 @@ import { Footer } from "@/components/footer"
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <h1 style={{ color: "red", textAlign: "center" }}>
-        TEST CAMBIO
-      </h1>
-
       <Header />
       <Hero />
       <Stats />
