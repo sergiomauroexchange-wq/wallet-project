@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import { X } from "lucide-react"
 
 type Props = {
@@ -43,13 +42,21 @@ export function WalletCheckModal({ open, onClose }: Props) {
       name: "Trust Wallet",
       logo: "https://trustwallet.com/assets/images/media/assets/TWT.png",
     },
+    {
+      name: "TronLink",
+      logo: "https://seeklogo.com/images/T/tronlink-logo-4E6C60E3F6-seeklogo.com.png",
+    },
+    {
+      name: "SafePal",
+      logo: "https://seeklogo.com/images/S/safepal-logo-3A7D8D3A44-seeklogo.com.png",
+    },
   ]
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl relative animate-in fade-in zoom-in-95">
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl relative">
 
-        {/* Close */}
+        {/* CLOSE */}
         <button
           onClick={() => {
             onClose()
@@ -65,7 +72,7 @@ export function WalletCheckModal({ open, onClose }: Props) {
           {step === "network" ? "Select Network" : "Select Wallet"}
         </h2>
 
-        {/* STEP 1: NETWORK */}
+        {/* NETWORK STEP */}
         {step === "network" && (
           <div className="space-y-3">
             {networks.map((net) => (
@@ -75,21 +82,16 @@ export function WalletCheckModal({ open, onClose }: Props) {
                   setSelectedNetwork(net.name)
                   setStep("wallet")
                 }}
-                className="w-full flex items-center gap-3 p-4 rounded-xl border hover:bg-gray-50 transition"
+                className="w-full flex items-center gap-3 p-4 rounded-xl border hover:bg-gray-50"
               >
-                <Image
-                  src={net.logo}
-                  alt={net.name}
-                  width={28}
-                  height={28}
-                />
+                <img src={net.logo} className="w-7 h-7" />
                 <span className="font-medium">{net.name}</span>
               </button>
             ))}
           </div>
         )}
 
-        {/* STEP 2: WALLET */}
+        {/* WALLET STEP */}
         {step === "wallet" && (
           <div className="space-y-3">
             <p className="text-sm text-gray-500 mb-2">
@@ -104,14 +106,9 @@ export function WalletCheckModal({ open, onClose }: Props) {
                   onClose()
                   setStep("network")
                 }}
-                className="w-full flex items-center gap-3 p-4 rounded-xl border hover:bg-gray-50 transition"
+                className="w-full flex items-center gap-3 p-4 rounded-xl border hover:bg-gray-50"
               >
-                <Image
-                  src={wallet.logo}
-                  alt={wallet.name}
-                  width={28}
-                  height={28}
-                />
+                <img src={wallet.logo} className="w-7 h-7" />
                 <span className="font-medium">{wallet.name}</span>
               </button>
             ))}
