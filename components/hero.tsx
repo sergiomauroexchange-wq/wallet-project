@@ -40,7 +40,6 @@ export function Hero() {
               <Button
                 size="lg"
                 className="gap-2 shadow-lg shadow-primary/20"
-                onClick={() => alert("Coming soon")}
               >
                 Check Your Wallet
                 <Zap className="h-4 w-4" />
