@@ -14,51 +14,51 @@ export function WalletCheckModal({ open, onClose }: Props) {
 
   if (!open) return null
 
-const networks = [
-  {
-    name: "Ethereum",
-    logo: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
-  },
-  {
-    name: "BNB Chain",
-    logo: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png",
-  },
-  {
-    name: "TRON",
-    logo: "https://assets.coingecko.com/coins/images/1094/small/tron-logo.png",
-  },
-  {
-    name: "Solana",
-    logo: "https://assets.coingecko.com/coins/images/4128/small/solana.png",
-  },
-]
+  const networks = [
+    {
+      name: "Ethereum",
+      logo: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
+    },
+    {
+      name: "BNB Chain",
+      logo: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png",
+    },
+    {
+      name: "TRON",
+      logo: "https://assets.coingecko.com/coins/images/1094/small/tron-logo.png",
+    },
+    {
+      name: "Solana",
+      logo: "https://assets.coingecko.com/coins/images/4128/small/solana.png",
+    },
+  ]
 
-const wallets = [
-  {
-    name: "MetaMask",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
-  },
-  {
-    name: "WalletConnect",
-    logo: "https://avatars.githubusercontent.com/u/37784886",
-  },
-  {
-    name: "Trust Wallet",
-    logo: "https://trustwallet.com/assets/images/media/assets/TWT.png",
-  },
-  {
-    name: "Phantom", // 👈 para Solana
-    logo: "https://avatars.githubusercontent.com/u/78782331",
-  },
-  {
-    name: "TronLink",
-    logo: "https://avatars.githubusercontent.com/u/37784886?s=200&v=4", // fallback estable
-  },
-  {
-    name: "SafePal",
-    logo: "https://seeklogo.com/images/S/safepal-logo-3A7D8D3A44-seeklogo.com.png",
-  },
-]
+  const wallets = [
+    {
+      name: "MetaMask",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
+    },
+    {
+      name: "WalletConnect",
+      logo: "https://avatars.githubusercontent.com/u/37784886",
+    },
+    {
+      name: "Trust Wallet",
+      logo: "https://trustwallet.com/assets/images/media/assets/TWT.png",
+    },
+    {
+      name: "Phantom",
+      logo: "https://avatars.githubusercontent.com/u/78782331",
+    },
+    {
+      name: "TronLink",
+      logo: "https://avatars.githubusercontent.com/u/37784886?s=200&v=4",
+    },
+    {
+      name: "SafePal",
+      logo: "", // 👈 ya no usamos logo roto
+    },
+  ]
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -116,7 +116,14 @@ const wallets = [
                 }}
                 className="w-full flex items-center gap-3 p-4 rounded-xl border hover:bg-gray-50"
               >
-                <img src={wallet.logo} className="w-7 h-7" />
+                {wallet.name === "SafePal" ? (
+                  <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold">
+                    S
+                  </div>
+                ) : (
+                  <img src={wallet.logo} className="w-7 h-7" />
+                )}
+
                 <span className="font-medium">{wallet.name}</span>
               </button>
             ))}
