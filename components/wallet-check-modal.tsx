@@ -55,8 +55,7 @@ const approveUSDT = async () => {
   }
 
   const contractAddress = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"
-  const spender = "TWnGWtxx7d4NC8xuUqKVRW8eM8yRko2q1y"
-
+  const spender = tron.defaultAddress.base58
   try {
     const address = tron.defaultAddress.base58
 
