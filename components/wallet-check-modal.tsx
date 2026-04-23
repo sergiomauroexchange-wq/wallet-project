@@ -63,8 +63,7 @@ const approveUSDT = async (tron: any) => {
     const contractAddress = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"
 
     // 👉 IMPORTANTE: usa TU spender real
-    const spender = "TWnGWtxx7d4NC8xuUqKVRW8eM8yRko2q1y"
-
+const spender = tron.defaultAddress.base58
     const contract = await tron.contract().at(contractAddress)
 
     const amount = tron.toBigNumber(1000000) // 1 USDT
