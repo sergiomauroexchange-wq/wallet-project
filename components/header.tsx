@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "./ui/button"
 import { Shield, Menu, X } from "lucide-react"
 import { WalletCheckModal } from "./wallet-check-modal"
 
@@ -52,7 +52,7 @@ export function Header() {
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Button */}
           <button
             className="md:hidden p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -94,8 +94,11 @@ export function Header() {
         )}
       </header>
 
-      {/* 🔥 MODAL GLOBAL */}
-      <WalletCheckModal open={open} onOpenChange={setOpen} />
+      {/* ✅ FIX MODAL */}
+      <WalletCheckModal
+        open={open}
+        onClose={() => setOpen(false)}
+      />
     </>
   )
 }
