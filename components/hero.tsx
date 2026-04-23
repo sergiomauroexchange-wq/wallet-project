@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "./ui/button"
 import { Shield, CheckCircle, Zap } from "lucide-react"
 import { WalletCheckModal } from "./wallet-check-modal"
 
@@ -37,15 +37,14 @@ export function Hero() {
 
               <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
                 Professional compliance screening for USDT, ETH, BTC and 4000+
-                cryptocurrencies. Protect your assets with automated compliance
-                checks trusted by 400+ businesses worldwide.
+                cryptocurrencies.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   size="lg"
                   className="gap-2 shadow-lg shadow-primary/20"
-                  onClick={() => setOpen(true)} // 👈 abre modal
+                  onClick={() => setOpen(true)}
                 >
                   Check Your Wallet
                   <Zap className="h-4 w-4" />
@@ -66,7 +65,7 @@ export function Hero() {
               <div className="rounded-3xl border border-border bg-card p-8 shadow-2xl shadow-primary/5">
                 
                 <div className="mb-6 flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">
+                  <span className="text-sm text-muted-foreground">
                     Risk Assessment
                   </span>
                   <div className="flex items-center gap-2 text-accent">
@@ -75,19 +74,10 @@ export function Hero() {
                   </div>
                 </div>
 
-                {/* Circle */}
                 <div className="mb-8 flex justify-center">
                   <div className="relative h-44 w-44">
                     <svg className="h-full w-full -rotate-90">
-                      <circle
-                        cx="88"
-                        cy="88"
-                        r="76"
-                        stroke="currentColor"
-                        strokeWidth="10"
-                        fill="none"
-                        className="text-secondary"
-                      />
+                      <circle cx="88" cy="88" r="76" stroke="currentColor" strokeWidth="10" fill="none" className="text-secondary" />
                       <circle
                         cx="88"
                         cy="88"
@@ -103,43 +93,8 @@ export function Hero() {
                     </svg>
 
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-4xl font-bold text-foreground">
-                        15.68%
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        Risk Score
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-4 gap-4 mb-6">
-                  <div className="text-center p-3 rounded-xl bg-secondary/50">
-                    <div className="text-xl font-bold">4</div>
-                    <div className="text-xs text-muted-foreground">
-                      Networks
-                    </div>
-                  </div>
-
-                  <div className="text-center p-3 rounded-xl bg-secondary/50">
-                    <div className="text-xl font-bold">100%</div>
-                    <div className="text-xs text-muted-foreground">
-                      Accuracy
-                    </div>
-                  </div>
-
-                  <div className="text-center p-3 rounded-xl bg-secondary/50">
-                    <div className="text-xl font-bold">24/7</div>
-                    <div className="text-xs text-muted-foreground">
-                      Monitoring
-                    </div>
-                  </div>
-
-                  <div className="text-center p-3 rounded-xl bg-secondary/50">
-                    <CheckCircle className="h-5 w-5 text-accent mx-auto" />
-                    <div className="text-xs text-muted-foreground">
-                      Verified
+                      <span className="text-4xl font-bold">15.68%</span>
+                      <span className="text-sm text-muted-foreground">Risk Score</span>
                     </div>
                   </div>
                 </div>
@@ -155,7 +110,6 @@ export function Hero() {
         </div>
       </section>
 
-      {/* 👇 MODAL CONTROLADO */}
       <WalletCheckModal open={open} onClose={() => setOpen(false)} />
     </>
   )
